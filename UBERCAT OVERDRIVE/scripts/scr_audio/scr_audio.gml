@@ -12,11 +12,20 @@ gaindef(snd_grounded,.52);
 gaindef(snd_flight,.61);
 gaindef(snd_explosion2,.69);
 gaindef(snd_charge,.56);
-gaindef(snd_carcrash,.81);
 
 
-function sound_set_gain(ind,g,frames=0) {
-	audio_sound_gain(ind,struct_get(global.gain_def,audio_get_name(ind),1)*g,frames/30*1000);
+function sound_set_gain(ind, g, frames = 0) {
+    var sound_name = audio_get_name(ind);
+    
+    var base_gain = variable_struct_exists(global.gain_def, sound_name) 
+        ? global.gain_def[$ sound_name] 
+        : 1;
+    
+    var final_gain = base_gain * g;
+    
+    var transition_time = frames * (1000 / 30);
+    
+    audio_sound_gain(ind, final_gain, transition_time);
 }
 function gaindef(sound,gain) {
 	global.gain_def[$ sound] = gain;
